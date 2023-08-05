@@ -3,6 +3,8 @@ package utils
 import (
 	"fmt"
 	"github.com/mattn/go-colorable"
+	"os"
+	"path/filepath"
 )
 
 var (
@@ -64,4 +66,11 @@ func colorizeLevel(level string) string {
 
 	// Send common or colored caption.
 	return fmt.Sprintf("%s%s%s", color, icon, noColor)
+}
+
+// RemoveFolders function for massively remove folders.
+func RemoveFolders(rootFolder string, foldersToRemove []string) {
+	for _, folder := range foldersToRemove {
+		_ = os.RemoveAll(filepath.Join(rootFolder, folder))
+	}
 }

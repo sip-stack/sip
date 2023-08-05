@@ -5,7 +5,6 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/paulmanoni/sip/pkg/registry"
 	"github.com/paulmanoni/sip/pkg/utils"
-	"github.com/paulmanoni/sip/templates"
 	"github.com/spf13/cobra"
 )
 
@@ -37,40 +36,39 @@ func runCreateCmd(cmd *cobra.Command, args []string) error {
 		),
 		true, true,
 	)
+	backend := ""
+	frontend := "none"
 
 	if useCustomTemplate {
 		if err := survey.Ask(registry.CreateQuestions, &customCreateAnswers, survey.WithIcons(surveyIconsConfig)); err != nil {
 			return utils.ShowError(err.Error())
 		}
+		backend = createAnswers.Backend
+		frontend = createAnswers.Frontend
 	} else {
 		if err := survey.Ask(registry.CreateQuestions, &createAnswers, survey.WithIcons(surveyIconsConfig)); err != nil {
 			return utils.ShowError(err.Error())
 		}
-		backend := createAnswers.Backend
-		frontend := createAnswers.Frontend
-
-		switch backend {
-		case "gin-gonic":
-			templates.GenerateGinGonicProject(createAnswers.Project)
+		backend = createAnswers.Backend
+		frontend = createAnswers.Frontend
+	}
+	if err := utils.GitClone("backend", backend); err != nil {
+		return utils.ShowError(err.Error())
+	}
+	if frontend != "none" {
+		switch frontend {
+		case "nuxt":
+			if err := utils.ExecCommand(
+				"npx", []string{"nuxi", "init", "frontend"}, true,
+			); err != nil {
+				return err
+			}
 		default:
-			fmt.Println("Hello world")
-		}
-
-		if frontend != "none" {
-			switch frontend {
-			case "nuxt":
-				if err := utils.ExecCommand(
-					"npx", []string{"nuxi", "init", "frontend"}, true,
-				); err != nil {
-					return err
-				}
-			default:
-				// Create a default frontend template from Vite (Pure JS/TS, React, Preact, Vue, Svelte, Lit).
-				if err := utils.ExecCommand(
-					"npm", []string{"init", "vite@latest", "frontend", "--", "--template", frontend}, true,
-				); err != nil {
-					return err
-				}
+			// Create a default frontend template from Vite (Pure JS/TS, React, Preact, Vue, Svelte, Lit).
+			if err := utils.ExecCommand(
+				"npm", []string{"init", "vite@latest", "frontend", "--", "--template", frontend}, true,
+			); err != nil {
+				return err
 			}
 		}
 	}
