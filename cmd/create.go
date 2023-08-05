@@ -5,8 +5,8 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/paulmanoni/sip/pkg/registry"
 	"github.com/paulmanoni/sip/pkg/utils"
+	"github.com/paulmanoni/sip/templates"
 	"github.com/spf13/cobra"
-	"runtime"
 )
 
 func init() {
@@ -51,14 +51,7 @@ func runCreateCmd(cmd *cobra.Command, args []string) error {
 
 		switch backend {
 		case "gin-gonic":
-			//	project folder
-			switch runtime.GOOS {
-			case "windows":
-				utils.ExecCommand("cmd", []string{"/c", "mkdir", createAnswers.Project}, true)
-				utils.ExecCommand("cmd", []string{"/c", "cd", createAnswers.Project}, true)
-				utils.ExecCommand("cmd", []string{"/c", "mkdir", "cmd"}, true)
-			}
-
+			templates.GenerateGinGonicProject(createAnswers.Project)
 		default:
 			fmt.Println("Hello world")
 		}
