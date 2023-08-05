@@ -1,2 +1,2 @@
 # sip
-Golang Web Framework
+Golang CLI For Scaffold Project
