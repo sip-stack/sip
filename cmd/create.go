@@ -56,7 +56,7 @@ func runCreateCmd(cmd *cobra.Command, args []string) error {
 		frontend = createAnswers.Frontend
 		folder = createAnswers.Project
 	}
-	if err := utils.GitClone(strings.ToLower(folder), fmt.Sprintf("https://github.com/paulmanoni/%v-template", backend)); err != nil {
+	if err := utils.GitClone(strings.ToLower(folder), fmt.Sprintf("https://github.com/sip-stack/%v-template", backend)); err != nil {
 		return utils.ShowError(err.Error())
 	}
 	if frontend != "none" {
