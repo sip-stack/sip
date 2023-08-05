@@ -38,6 +38,7 @@ func runCreateCmd(cmd *cobra.Command, args []string) error {
 	)
 	backend := ""
 	frontend := "none"
+	folder := "backend"
 
 	if useCustomTemplate {
 		if err := survey.Ask(registry.CreateQuestions, &customCreateAnswers, survey.WithIcons(surveyIconsConfig)); err != nil {
@@ -45,14 +46,16 @@ func runCreateCmd(cmd *cobra.Command, args []string) error {
 		}
 		backend = createAnswers.Backend
 		frontend = createAnswers.Frontend
+		folder = createAnswers.Project
 	} else {
 		if err := survey.Ask(registry.CreateQuestions, &createAnswers, survey.WithIcons(surveyIconsConfig)); err != nil {
 			return utils.ShowError(err.Error())
 		}
 		backend = createAnswers.Backend
 		frontend = createAnswers.Frontend
+		folder = createAnswers.Project
 	}
-	if err := utils.GitClone("backend", backend); err != nil {
+	if err := utils.GitClone(folder, fmt.Sprintf("https://github.com/paulmanoni/%v-template", backend)); err != nil {
 		return utils.ShowError(err.Error())
 	}
 	if frontend != "none" {
